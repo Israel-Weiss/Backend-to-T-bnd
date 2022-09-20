@@ -3,19 +3,12 @@ const logger = require('../../services/logger.service')
 const ObjectId = require('mongodb').ObjectId
 const asyncLocalStorage = require('../../services/als.service')
 
-
-async function query(filterBy = {}) {
+async function query(filterBy) {
     try {
-        const criteria = _buildCriteria(filterBy)
+        const criteria = _buildCriteria({ filterBy })
+        console.log(criteria);
         const collection = await dbService.getCollection('stay')
-        const stays = await collection.find(criteria).toArray()
-        stays = stays.map(stay => {
-            stay.byUser = { _id: stay.byUser._id, fullname: stay.byUser.fullname }
-            stay.aboutUser = { _id: stay.aboutUser._id, fullname: stay.aboutUser.fullname }
-            delete stay.byUserId
-            delete stay.aboutUserId
-            return stay
-        })
+        var stays = await collection.find(criteria).limit(99999999).toArray()
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -41,7 +34,7 @@ async function remove(stayId) {
         const collection = await dbService.getCollection('stay')
         const criteria = { _id: ObjectId(reviewId) }
         if (!loggedinUser.isAdmin) criteria.byUserId = ObjectId(loggedinUser._id)
-        const {deletedCount} = await collection.deleteOne(criteria)
+        const { deletedCount } = await collection.deleteOne(criteria)
         return deletedCount
     } catch (err) {
         logger.error(`cannot remove stay ${stayId}`, err)
@@ -80,9 +73,49 @@ async function update(stay) {
 
 function _buildCriteria(filterBy) {
     const criteria = {}
-    if (filterBy.byUserId) criteria.byUserId = filterBy.byUserId
+    if (filterBy.hostId) criteria.bedrooms = filterBy.hostId
+    // if (filterBy.tag) criteria.type = filterBy.type
+    // if (filterBy.Price) criteria.Price = {price:{$gt:filterBy.Price[0],$lte:filterBy.Price[1]}}
+    // if (label) {criteria.amenities = { $in: [label] }}
     return criteria
 }
+
+// function _buildCriteria_({ inStock, label, name }) {
+//     const criteria = {}
+//     inStock = JSON.parse(inStock)
+//     if (name) {
+//         const regex = new RegExp(name, 'i')
+//         criteria.name = { $regex: regex }
+//     }
+//     if (inStock) {
+//         criteria.inStock = true
+//     }
+//     if (label) {
+//         criteria.labels = { $in: [label] }
+//     }
+//     return criteria
+// }
+
+// function _buildCriteria__(filterBy) {
+//     const criteria = {}
+//     if (filterBy.txt) {
+//         const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
+//         criteria.$or = [
+//             {
+//                 username: txtCriteria
+//             },
+//             {
+//                 fullname: txtCriteria
+//             }
+//         ]
+//     }
+//     if (filterBy.minBalance) {
+//         criteria.score = { $gte: filterBy.minBalance }
+//     }
+//     return criteria
+// }
+
+
 
 module.exports = {
     remove,
