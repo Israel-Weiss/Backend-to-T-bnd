@@ -14,17 +14,11 @@ module.exports = {
 }
 
 async function query(filterBy = {}) {
-    const criteria = _buildCriteria(filterBy)
+    const criteria = {}
     try {
         const collection = await dbService.getCollection('user')
         var users = await collection.find(criteria).toArray()
-        users = users.map(user => {
-            delete user.password
-            user.createdAt = ObjectId(user._id).getTimestamp()
-            // Returning fake fresh data
-            // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
-            return user
-        })
+     
         return users
     } catch (err) {
         logger.error('cannot find users', err)
@@ -91,13 +85,7 @@ async function update(user) {
 async function add(user) {
     try {
         // peek only updatable fields!
-        const userToAdd = {
-            username: user.username,
-            password: user.password,
-            fullname: user.fullname,
-            imgUrl: user.imgUrl,
-            score: 100
-        }
+        const userToAdd = user
         const collection = await dbService.getCollection('user')
         await collection.insertOne(userToAdd)
         return userToAdd

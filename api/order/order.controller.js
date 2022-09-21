@@ -1,5 +1,6 @@
 const orderService = require('./order.service.js');
-const logger = require('../../services/logger.service')
+const logger = require('../../services/logger.service');
+const { log } = require('../../middlewares/logger.middleware.js');
 
 async function getOrders(req, res) {
   try {
@@ -14,7 +15,7 @@ async function getOrders(req, res) {
 }
 
 async function addOrder(req, res) {
-  var loggedinUser = authService.validateToken(req.cookies.loginToken)
+  console.log("im got here");
   try {
     const order = req.body
     const addedOrder = await orderService.add(order)

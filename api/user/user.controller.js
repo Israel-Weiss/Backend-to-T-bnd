@@ -12,12 +12,28 @@ async function getUser(req, res) {
     }
 }
 
+
+async function addUser(req, res) {
+    // var loggedinUser = authService.validateToken(req.cookies.loginToken)
+    try {
+      const user = req.body
+      const addedUser = await userService.add(user)
+      res.json(addedUser)
+    } catch (err) {
+      logger.error('Failed to add stay', err)
+      res.status(500).send({ err: 'Failed to add stay' })
+    }
+  }
+
+
+
 async function getUsers(req, res) {
     try {
         const filterBy = {
             txt: req.query?.txt || '',
             minBalance: +req.query?.minBalance || 0
         }
+        console.log("im got here");
         const users = await userService.query(filterBy)
         res.send(users)
     } catch (err) {
@@ -51,5 +67,6 @@ module.exports = {
     getUser,
     getUsers,
     deleteUser,
-    updateUser
+    updateUser,
+    addUser
 }

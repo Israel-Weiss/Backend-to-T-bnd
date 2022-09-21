@@ -5,7 +5,7 @@ const { getStays, getStayById, addStay, updateStay, removeStay } = require('./st
 const router = express.Router()
 
 router.get('/', log, getStays)
-router.get('/:id', log, getStayById)
+router.get('/:id', getStayById)
 router.post('/', log, requireAuth, addStay)
 router.put('/:id', log, requireAuth, updateStay)
 router.delete('/:id', log, requireAuth, requireAdmin, removeStay)

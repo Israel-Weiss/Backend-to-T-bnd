@@ -5,7 +5,7 @@ const asyncLocalStorage = require('../../services/als.service')
 
 async function query(filterBy) {
     try {
-        const criteria = _buildCriteria({ filterBy })
+        const criteria = {}
         const collection = await dbService.getCollection('order')
         var orders = await collection.find(criteria).limit(99999999).toArray()
         return orders
@@ -42,14 +42,15 @@ async function remove(orderId) {
 }
 
 async function add(order) {
+    console.log(order);
     try {
-        const orderToAdd = {
-            byUserId: ObjectId(order.byUserId),
-            aboutUserId: ObjectId(order.aboutUserId),
-            txt: order.txt
-        }
+        // const orderToAdd = {
+        //     byUserId: ObjectId(order.byUserId),
+        //     aboutUserId: ObjectId(order.aboutUserId),
+        //     txt: order.txt
+        // }
         const collection = await dbService.getCollection('order')
-        const addedStay = await collection.insertOne(orderToAdd)
+        const addedStay = await collection.insertOne(order)
         return addedStay
     } catch (err) {
         logger.error('cannot insert order', err)
