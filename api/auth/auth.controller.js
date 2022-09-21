@@ -16,6 +16,7 @@ async function login(req, res) {
 }
 
 async function signup(req, res) {
+    console.log("im here");
     try {
         const credentials = req.body
         const account = await authService.signup(credentials)

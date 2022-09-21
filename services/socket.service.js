@@ -1,5 +1,5 @@
+const { Socket } = require('socket.io')
 const logger = require('./logger.service')
-
 var gIo = null
 
 function setupSocketAPI(http) {
@@ -8,36 +8,58 @@ function setupSocketAPI(http) {
             origin: '*',
         }
     })
+
     gIo.on('connection', socket => {
         logger.info(`New connected socket [id: ${socket.id}]`)
         socket.on('disconnect', socket => {
             logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
-        socket.on('chat-set-topic', topic => {
-            if (socket.myTopic === topic) return
-            if (socket.myTopic) {
-                socket.leave(socket.myTopic)
-                logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
+
+        socket.on('chat-set-topic', toyId => {
+            if (socket.toyId === toyId) return
+            if (socket.toyId) {
+                socket.leave(socket.toyId)
+                logger.info(`Socket is leaving topic ${socket.toyId} [id: ${socket.id}]`)
             }
-            socket.join(topic)
-            socket.myTopic = topic
+            socket.join(toyId)
+            socket.toyId = toyId
         })
+
         socket.on('chat-send-msg', msg => {
             logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
             // emits to all sockets:
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room
-            gIo.to(socket.myTopic).emit('chat-add-msg', msg)
+            toyService.addMsgToToy(msg)
+            console.log('msg', msg);
+            gIo.to(socket.toyId).emit('chat-add-msg', msg)
         })
+
+        // Example
+        // socket.on('send-notification', notif => {
+        //     logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
+        //     // emits to all sockets:
+        //     // gIo.emit('chat addMsg', msg)
+        //     // emits only to sockets in the same room
+        //     gIo.to(notif.userId).emit('chat-add-msg', notif)
+        // })
+
+        socket.on('chat-typing', (userTyping) => {
+            console.log('user', socket.toyId)
+
+            socket.broadcast.to(socket.toyId).emit('chat-user-typing', userTyping)
+        })
+
         socket.on('user-watch', userId => {
             logger.info(`user-watch from socket [id: ${socket.id}], on user ${userId}`)
             socket.join('watching:' + userId)
-
         })
+
         socket.on('set-user-socket', userId => {
             logger.info(`Setting socket.userId = ${userId} for socket [id: ${socket.id}]`)
             socket.userId = userId
         })
+
         socket.on('unset-user-socket', () => {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
@@ -67,6 +89,7 @@ async function emitToUser({ type, data, userId }) {
 // If possible, send to all sockets BUT not the current socket 
 // Optionally, broadcast to a room / to all
 async function broadcast({ type, data, room = null, userId }) {
+
     userId = userId?.toString()
 
     logger.info(`Broadcasting event: ${type}`)
@@ -75,6 +98,7 @@ async function broadcast({ type, data, room = null, userId }) {
         logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
+        console.log("in")
         logger.info(`Broadcast to all excluding user: ${userId}`)
         excludedSocket.broadcast.emit(type, data)
     } else if (room) {
@@ -91,6 +115,7 @@ async function _getUserSocket(userId) {
     const socket = sockets.find(s => s.userId === userId)
     return socket
 }
+
 async function _getAllSockets() {
     // return all Socket instances
     const sockets = await gIo.fetchSockets()
@@ -102,6 +127,7 @@ async function _printSockets() {
     console.log(`Sockets: (count: ${sockets.length}):`)
     sockets.forEach(_printSocket)
 }
+
 function _printSocket(socket) {
     console.log(`Socket - socketId: ${socket.id} userId: ${socket.userId}`)
 }

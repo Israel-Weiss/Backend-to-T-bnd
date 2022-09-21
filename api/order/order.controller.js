@@ -1,6 +1,7 @@
 const orderService = require('./order.service.js');
 const logger = require('../../services/logger.service');
 const { log } = require('../../middlewares/logger.middleware.js');
+const socketService = require('../../services/socket.service')
 
 async function getOrders(req, res) {
   try {
@@ -19,6 +20,8 @@ async function addOrder(req, res) {
   try {
     const order = req.body
     const addedOrder = await orderService.add(order)
+    socketService.broadcast({ type: 'order-added', data:addedOrder  })
+
     res.json(addedOrder)
   } catch (err) {
     logger.error('Failed to add order', err)
@@ -32,6 +35,9 @@ async function updateOrder(req, res) {
     const order = req.body;
     const updatedOrder = await orderService.update(order)
     res.json(updatedOrder)
+    // const orders= await orderService.query()
+    socketService.broadcast({ type: 'order-update', data:updatedOrder  })
+
   } catch (err) {
     logger.error('Failed to update order', err)
     res.status(500).send({ err: 'Failed to update order' })
