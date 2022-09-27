@@ -2,12 +2,13 @@ const dbService = require('../../services/db.service')
 const logger = require('../../services/logger.service')
 const ObjectId = require('mongodb').ObjectId
 const asyncLocalStorage = require('../../services/als.service')
+const { log } = require('../../middlewares/logger.middleware')
 
 async function query(filterBy) {
     try {
-        const criteria = _buildCriteria({ filterBy })
+        const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection('stay')
-        var stays = await collection.find(criteria)/*.limit(99999999)*/.toArray()
+        var stays = await collection.find(criteria).sort({ _id: -1 }).toArray()
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
@@ -43,13 +44,9 @@ async function remove(stayId) {
 
 async function add(stay) {
     try {
-        const stayToAdd = {
-            byUserId: ObjectId(stay.byUserId),
-            aboutUserId: ObjectId(stay.aboutUserId),
-            txt: stay.txt
-        }
+
         const collection = await dbService.getCollection('stay')
-        const addedStay = await collection.insertOne(stayToAdd)
+        const addedStay = await collection.insertOne(stay)
         return addedStay
     } catch (err) {
         logger.error('cannot insert stay', err)
@@ -71,48 +68,22 @@ async function update(stay) {
 }
 
 function _buildCriteria(filterBy) {
-    const criteria = {}
-    if (filterBy.hostId) criteria.bedrooms = filterBy.hostId
-    // if (filterBy.tag) criteria.type = filterBy.type
-    // if (filterBy.Price) criteria.Price = {price:{$gt:filterBy.Price[0],$lte:filterBy.Price[1]}}
-    // if (label) {criteria.amenities = { $in: [label] }}
+    console.log(filterBy);
+    var criteria = {}
+    if (filterBy.range) criteria.price = { $gt: filterBy.range.start, $lt: filterBy.range.end }
+    if (filterBy.type) criteria.type = filterBy.type
+    if (filterBy.text) {
+        var regex = new RegExp("^" + filterBy.text)
+        criteria = { ...criteria, $or: [{ "loc.country": { $regex: regex, $options: 'i' } }, { "loc.city": { $regex: regex, $options: 'i' } }] }
+    }
+    if (filterBy.roomType) criteria = { ...criteria, roomType: { $regex: filterBy.roomType, $options: 'i' } }
+    if (filterBy.capacity) criteria = { ...criteria, capacity: filterBy.capacity}
+    if (filterBy.bedrooms) criteria = { ...criteria, bedrooms: filterBy.bedrooms } 
+    if (filterBy.bathrooms) criteria = { ...criteria, bathrooms:  filterBy.bathrooms} 
+    
+    console.log("criteria ", criteria);
     return criteria
 }
-
-// function _buildCriteria_({ inStock, label, name }) {
-//     const criteria = {}
-//     inStock = JSON.parse(inStock)
-//     if (name) {
-//         const regex = new RegExp(name, 'i')
-//         criteria.name = { $regex: regex }
-//     }
-//     if (inStock) {
-//         criteria.inStock = true
-//     }
-//     if (label) {
-//         criteria.labels = { $in: [label] }
-//     }
-//     return criteria
-// }
-
-// function _buildCriteria__(filterBy) {
-//     const criteria = {}
-//     if (filterBy.txt) {
-//         const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
-//         criteria.$or = [
-//             {
-//                 username: txtCriteria
-//             },
-//             {
-//                 fullname: txtCriteria
-//             }
-//         ]
-//     }
-//     if (filterBy.minBalance) {
-//         criteria.score = { $gte: filterBy.minBalance }
-//     }
-//     return criteria
-// }
 
 
 

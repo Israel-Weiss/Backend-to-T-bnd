@@ -1,11 +1,21 @@
 const stayService = require('./stay.service.js')
 const logger = require('../../services/logger.service')
+const { log } = require('../../middlewares/logger.middleware.js')
+const socketService = require('../../services/socket.service')
 
 async function getStays(req, res) {
   try {
     logger.debug('Getting stays')
     var queryParams = req.query
-    const stays = await stayService.query(queryParams)
+console.log("parmas",req.query.params);
+    let filterBy
+    if (req.query.params) {
+        filterBy = JSON.parse(req.query.params)
+    } else
+        filterBy = {}
+
+    const stays = await stayService.query(filterBy)
+
     res.json(stays)
   } catch (err) {
     logger.error('Failed to get stays', err)
@@ -14,11 +24,12 @@ async function getStays(req, res) {
 }
 
 async function addStay(req, res) {
-  var loggedinUser = authService.validateToken(req.cookies.loginToken)
+  // var loggedinUser = authService.validateToken(req.cookies.loginToken)
   try {
     const stay = req.body
     const addedStay = await stayService.add(stay)
     res.json(addedStay)
+    socketService.broadcast({ type: 'stay-added', data:addedStay   })
   } catch (err) {
     logger.error('Failed to add stay', err)
     res.status(500).send({ err: 'Failed to add stay' })
