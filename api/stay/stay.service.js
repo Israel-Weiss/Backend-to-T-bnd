@@ -77,9 +77,9 @@ function _buildCriteria(filterBy) {
         criteria = { ...criteria, $or: [{ "loc.country": { $regex: regex, $options: 'i' } }, { "loc.city": { $regex: regex, $options: 'i' } }] }
     }
     if (filterBy.roomType) criteria = { ...criteria, roomType: { $regex: filterBy.roomType, $options: 'i' } }
-    if (filterBy.capacity) criteria = { ...criteria, capacity: filterBy.capacity}
-    if (filterBy.bedrooms) criteria = { ...criteria, bedrooms: filterBy.bedrooms } 
-    if (filterBy.bathrooms) criteria = { ...criteria, bathrooms:  filterBy.bathrooms} 
+    if (filterBy.capacity) criteria = { ...criteria, "capacity.guests": filterBy.capacity}
+    if (filterBy.bedrooms) criteria = { ...criteria, "capacity.bedrooms": filterBy.bedrooms } 
+    if (filterBy.bathrooms) criteria = { ...criteria, "capacity.bathrooms":  filterBy.bathrooms} 
     
     console.log("criteria ", criteria);
     return criteria
