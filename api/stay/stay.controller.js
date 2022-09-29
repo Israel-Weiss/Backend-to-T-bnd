@@ -7,12 +7,12 @@ async function getStays(req, res) {
   try {
     logger.debug('Getting stays')
     var queryParams = req.query
-console.log("parmas",req.query.params);
+    console.log("parmas", req.query.params);
     let filterBy
     if (req.query.params) {
-        filterBy = JSON.parse(req.query.params)
+      filterBy = JSON.parse(req.query.params)
     } else
-        filterBy = {}
+      filterBy = {}
 
     const stays = await stayService.query(filterBy)
 
@@ -23,13 +23,24 @@ console.log("parmas",req.query.params);
   }
 }
 
+async function getPlaceList(req, res) {
+  try {
+    let text = req.query.params
+    console.log("text",text);
+  const placelist =  await stayService.getPlaceList(text)
+} catch (err) {
+  logger.error('Failed to get placelist', err)
+  res.status(500).send({ err: 'Failed to get placelist' })
+}
+}
+
+
 async function addStay(req, res) {
-  // var loggedinUser = authService.validateToken(req.cookies.loginToken)
   try {
     const stay = req.body
     const addedStay = await stayService.add(stay)
     res.json(addedStay)
-    socketService.broadcast({ type: 'stay-added', data:addedStay   })
+    socketService.broadcast({ type: 'stay-added', data: addedStay })
   } catch (err) {
     logger.error('Failed to add stay', err)
     res.status(500).send({ err: 'Failed to add stay' })
@@ -75,5 +86,6 @@ module.exports = {
   addStay,
   removeStay,
   updateStay,
+  getPlaceList,
   getStayById
 }
