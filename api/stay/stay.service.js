@@ -10,7 +10,7 @@ async function query(filterBy) {
         const criteria = _buildCriteria(filterBy)
         const collection = await dbService.getCollection('stay')
         if (filterBy.range || filterBy.text || filterBy.type) stays = await collection.find(criteria).sort({price: 1}).toArray()
-        else stays = await collection.find(criteria).sort({ _id: -1 }).toArray()
+        else stays = await collection.find(criteria).limit(100).sort({ _id: -1 }).toArray()
         return stays
     } catch (err) {
         logger.error('cannot find stays', err)
