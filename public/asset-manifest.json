@@ -1,9 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.2474a2c5.css",
-    "main.js": "/static/js/main.e14e881a.js",
+    "main.css": "/static/css/main.0ffbf931.css",
+    "main.js": "/static/js/main.6c4e4892.js",
     "static/media/logo-gif.gif": "/static/media/logo-gif.6751531cbad1486975fd.gif",
-    "static/media/loading.gif": "/static/media/loading.92b44ba9842f9d7269a3.gif",
     "static/media/Montserrat-Regular.ttf": "/static/media/Montserrat-Regular.ceb11275ab638627a643.ttf",
     "static/media/CircularStd-Light.otf": "/static/media/CircularStd-Light.4a1a0bfcc3a53847a945.otf",
     "static/media/logo.png": "/static/media/logo.b0abe730b9fcd14e9a13.png",
@@ -31,10 +30,10 @@
     "static/media/worldIcon.svg": "/static/media/worldIcon.6a047133bea8f0620c8bb38c0855332f.svg",
     "static/media/aircondition.svg": "/static/media/aircondition.cbbe18c0ed10a53c21e09ce08ccd79fd.svg",
     "static/media/workspace.svg": "/static/media/workspace.72ffb40c960379690d641a590a809be4.svg",
+    "index.html": "/index.html",
     "static/media/kitchen.svg": "/static/media/kitchen.4236b3c0d2bf364334ed35cbe545887c.svg",
     "static/media/parking.svg": "/static/media/parking.411d7ff187c24c21a6f1c0487cd60bd8.svg",
     "static/media/smokeallowed.svg": "/static/media/smokeallowed.547328308a63d52a8f0637915935371e.svg",
-    "index.html": "/index.html",
     "static/media/mountain.svg": "/static/media/mountain.c5f3002fd371fe76ae00299061bba81c.svg",
     "static/media/crib.svg": "/static/media/crib.52ef6c56fac5ad74325b3e12469d7708.svg",
     "static/media/tv.svg": "/static/media/tv.1b0c997a4e790efc2472982bf6020685.svg",
@@ -46,14 +45,16 @@
     "static/media/filterIcon.svg": "/static/media/filterIcon.e2795d497e591946edd1c0a91a95ef00.svg",
     "static/media/arowLeft.svg": "/static/media/arowLeft.7fb070a463ec4f9bbca1780f679ad8d7.svg",
     "static/media/arowRight.svg": "/static/media/arowRight.9fa1127c85a7b862bc96d98b7c43f684.svg",
+    "static/media/open-down.svg": "/static/media/open-down.c367fad4165bd52936217de59fd9177d.svg",
     "static/media/burgerIcon.svg": "/static/media/burgerIcon.10c9aea2b362c8707c64c9e8ab026855.svg",
+    "static/media/open-right.svg": "/static/media/open-right.528c41921db6fde6b36240df8b702add.svg",
     "static/media/cancel.svg": "/static/media/cancel.6e742bac04a1c57d5aa0abcce1c6800b.svg",
     "static/media/done.svg": "/static/media/done.00f12b556bb1aaa9dcafdf32bbbe7c71.svg",
-    "main.2474a2c5.css.map": "/static/css/main.2474a2c5.css.map",
-    "main.e14e881a.js.map": "/static/js/main.e14e881a.js.map"
+    "main.0ffbf931.css.map": "/static/css/main.0ffbf931.css.map",
+    "main.6c4e4892.js.map": "/static/js/main.6c4e4892.js.map"
   },
   "entrypoints": [
-    "static/css/main.2474a2c5.css",
-    "static/js/main.e14e881a.js"
+    "static/css/main.0ffbf931.css",
+    "static/js/main.6c4e4892.js"
   ]
 }
