@@ -8,7 +8,7 @@ async function query(filterBy) {
         const criteria = {}
         const collection = await dbService.getCollection('order')
         var orders = await collection.find(criteria).limit(99999999).sort({ _id: -1 }).toArray()
-        return orders
+        return orders.reverse()
     } catch (err) {
         logger.error('cannot find orders', err)
         throw err
